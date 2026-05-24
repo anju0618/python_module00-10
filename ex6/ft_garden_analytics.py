@@ -96,6 +96,7 @@ class Tree(Plant):
         self._stats = self.Stats()
 
     def produce_shade(self):
+        self._stats.record_shade()
         print(f"Tree {self.name} now produces a shade of "
               f"{self.get_height()}cm long and {self.trunk_diameter}cm wide.")
 
@@ -112,10 +113,12 @@ class Vegetable(Plant):
         self.nutritional_value = 0
 
     def age(self):
+        self._stats.record_age()
         self.set_age(self.get_age() + 1)
         self.nutritional_value += 5
 
     def grow(self):
+        self._stats.record_grow()
         self.set_height(self.get_height() + 2.0)
         self.nutritional_value += 10
 
