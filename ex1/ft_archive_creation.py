@@ -26,12 +26,12 @@ def ft_archive_creation(content: str) -> None:
     lines: list[str] = content.splitlines()
     transformed_lines: list[str] = []
     print("Transform data:")
-    print("---")
+    print("---\n")
     for line in lines:
         new_line: str = line + '#'
         print(new_line)
         transformed_lines.append(new_line)
-    print("---")
+    print("\n---")
 
     final_content: str = "\n".join(transformed_lines) + "\n"
     save_name: str = input("Enter new file name (or empty): ")
@@ -44,7 +44,7 @@ def ft_archive_creation(content: str) -> None:
         out_f: TextIO = open(save_name, "w")
         try:
             out_f.write(final_content)
-            print("Data saved in file '{save_name}'")
+            print(f"Data saved in file '{save_name}'")
         finally:
             out_f.close()
     except OSError as e:
