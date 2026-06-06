@@ -1,9 +1,8 @@
-The Codex: Mastering Python's Import Mysteries
-
-An alchemical laboratory project designed to explore and master the intricate mechanics of Python's packaging and import system. Developed with Python 3.10+, adhering to strict flake8 standards and mypy type annotations.
+# The Codex: Mastering Python's Import System
+This project is a practical laboratory designed to explore and master Python's packaging, namespace scoping, and import system. Developed with Python 3.10+, it fully complies with strict flake8 standards and mypy type annotations.
 
 📂 Project Structure
-
+```
 .
 ├── elements.py                 # Root elements (Fire, Water)
 ├── ft_alembic_0.py             # Basic import verification
@@ -14,65 +13,58 @@ An alchemical laboratory project designed to explore and master the intricate me
 ├── ft_alembic_5.py             # Namespace alias validation
 ├── ft_distillation_0.py        # Potion brewing with mixed elements
 ├── ft_distillation_1.py        # Package-level alias calling
-├── ft_kaboom_0.py              # Light magic (Circular dependency avoided)
-├── ft_kaboom_1.py              # Dark magic (Intentional circular dependency explosion)
+├── ft_kaboom_0.py              # Circular dependency resolved (Local import)
+├── ft_kaboom_1.py              # Circular dependency exception test
 ├── ft_transmutation_0.py       # Direct transmutation script
 ├── ft_transmutation_1.py       # Sub-package routing verification
 ├── ft_transmutation_2.py       # Top-level routing verification
 └── alchemy/                    # Base Package
-    ├── __init__.py             # Public API Gateway for the alchemy package
-    ├── elements.py             # Package elements (Earth, Air)
-    ├── potions.py              # Brewing formulas with nested references
-    ├── grimoire/               # Magic Spellbook Sub-package
-    │   ├── __init__.py         # Gateway to Grimoire
-    │   ├── dark_spellbook.py   # Circular import trigger
-    │   ├── dark_validator.py   # Circular validator
-    │   ├── light_spellbook.py  # Local import protection logic
-    │   └── light_validator.py  # Light validator
-    └── transmutation/          # Transmutation Sub-package
-        ├── __init__.py         # Gateway to Transmutation
-        └── recipes.py          # Absolute and Relative import mixes
+├── init.py             # Public API Gateway for the alchemy package
+├── elements.py             # Package elements (Earth, Air)
+├── potions.py              # Brewing formulas with nested references
+├── grimoire/               # Sub-package (Imports handling)
+│   ├── init.py         # Gateway to Grimoire
+│   ├── dark_spellbook.py   # Circular import simulator
+│   ├── dark_validator.py   # Circular validator
+│   ├── light_spellbook.py  # Local import protection logic
+│   └── light_validator.py  # Light validator
+└── transmutation/          # Transmutation Sub-package
+├── init.py         # Gateway to Transmutation
+└── recipes.py          # Absolute and Relative import integration
+```
 
+🧪 Technical Concepts Implemented
+1. Package Namespace Encapsulation (Part I)
+Controlled the public interface of the alchemy package using init.py.
 
-🧪 Alchemical Mysteries Solved
+create_air is exposed to the public API.
 
-1. Package Initialization & Encapsulation (Part I)
+create_earth remains encapsulated within the package submodule, raising an intentional AttributeError when external direct access is attempted.
 
-We control the public API of the alchemy package using __init__.py.
+2. Nested Imports & Namespace Aliasing (Part II)
+Resolved scopes by importing modules from the root and nested packages. It exposes custom, clean entrypoints under the package level (e.g., alchemy.heal aliasing healing_potion).
 
-Elements like create_air are publicly exposed.
-
-Elements like create_earth are hidden from the package root, intentionally raising an AttributeError when accessed incorrectly.
-
-2. Nested Import & Namespace Aliasing (Part II)
-
-Demonstrates pulling modules from different scopes (root and nested packages) and registering them under short, convenient aliases like alchemy.heal for better usability.
-
-3. Absolute vs. Relative Pathing (Part III)
-
-Features a combination of:
+3. Absolute vs. Relative Imports (Part III)
+Demonstrated proper configuration of path resolution:
 
 Absolute Import: from alchemy.potions import strength_potion (resolves relative to sys.path)
 
-Relative Import: from ..elements import create_air (resolves relative to the module's path in the package)
+Relative Import: from ..elements import create_air (resolves relative to the current module's position within the package structure)
 
-4. Avoiding the Circular Dependency "Explosion" (Part IV)
+4. Resolving Circular Dependencies (Part IV)
+Dark Package (dark_spellbook): Simulates a circular import collision. Both scripts reference each other at the module's root, causing an unresolvable initialization loop on import.
 
-Dark Magic (dark_spellbook): Triggers a fatal recursive loop by having both files import each other at the top-level during initial module loading.
+Light Package (light_spellbook): Resolves the loop using Local Imports inside functions, delaying the resolution of dependencies until execution time.
 
-Light Magic (light_spellbook): Avoids the recursive loop by utilizing Local Imports (importing within functions), deferring evaluation until the functions are called.
-
-⚙️ How to Verify
-
-1. Execute Test Suites
-
-Run the verification scripts located in the root directory:
+⚙️ Execution & Verification
+1. Running the Test Suites
+Validate the behavior of each module by executing the scripts in the root directory:
 
 python3 ft_alembic_0.py
 python3 ft_alembic_1.py
 python3 ft_alembic_2.py
 python3 ft_alembic_3.py
-python3 ft_alembic_4.py  # Expected to crash on Attribute Error
+python3 ft_alembic_4.py  # Expected behavior: raises AttributeError on hidden element
 python3 ft_alembic_5.py
 python3 ft_distillation_0.py
 python3 ft_distillation_1.py
@@ -80,74 +72,59 @@ python3 ft_transmutation_0.py
 python3 ft_transmutation_1.py
 python3 ft_transmutation_2.py
 python3 ft_kaboom_0.py
-python3 ft_kaboom_1.py   # Expected to crash on ImportError
+python3 ft_kaboom_1.py   # Expected behavior: raises ImportError due to circular dependency
 
-
-2. Quality and Standards Control
-
-# Check syntax with Flake8
+2. Linter & Static Analysis
+Check syntax and style with Flake8
 flake8 .
 
-# Check static types with Mypy
+Check static typing with Mypy
 mypy .
-# Note: ft_alembic_4.py is expected to raise a single error on purpose (accessing a hidden attribute).
 
+Note: ft_alembic_4.py is expected to report a single attribute error on purpose.
+3. Usage of # noqa Comments
+In init.py files: Used # noqa: F401 (Unused Import) to expose subpackage modules at the package level without triggering unused variable warnings. This aligns with standard Python packaging practices.
 
-3. About # noqa Annotations
+In ft_kaboom_1.py: Utilized # noqa: E402, F401, E501` to safely load the module at the bottom of the script. This ensures the descriptive terminal logs print correctly before the planned import crash occurs.
 
-In some scripts (__init__.py files and ft_kaboom_1.py), we intentionally used # noqa comments.
-
-In __init__.py, this is used to prevent flake8 from complaining about unused imports (F401), which is standard practice when exposing endpoints in package initialization files.
-
-In ft_kaboom_1.py, we deferred importing to the end of the file to allow outputs to print first. # noqa: E402, F401, E501 is applied to bypass style guidelines for this deliberate showcase of tracebacks.
-
-コーデックス: Pythonインポートの謎をマスターする
-
-Pythonのパッケージング、名前空間、インポートシステムの深奥な仕組みを理解し、制御するために作られたアルケミー（錬金術）テーマの学習用プロジェクトです。Python 3.10+で構築され、厳格な flake8 コーディングスタイルおよび mypy 静的型注釈に準拠しています。
+コーデックス: Pythonインポートシステムの完全理解
+本プロジェクトは、Pythonにおけるパッケージ化、名前空間のスコープ、およびインポートシステムの挙動を徹底検証するための開発環境です。Python 3.10以上で実装され、flake8 によるスタイル規約および mypy による厳格な静的型チェックをすべてパスしています。
 
 📂 プロジェクト構成
+上記英語セクションの Project Structure を参照してください。すべての検証用スクリプト、パッケージ、内部モジュールが破綻なく配置されています。
 
-上記英語セクションの Project Structure を参照してください。すべてのスクリプト、パッケージ、ネストされたサブモジュールが配置されています。
+🧪 実装された技術的アプローチ
+1. パッケージにおける名前空間のカプセル化 (Part I)
+init.py を利用して、alchemy パッケージのパブリックインターフェースを厳格に制御。
 
-🧪 解決された4つのインポートの謎
+create_air を外部APIとして公開。
 
-1. パッケージの初期化と隠蔽（Part I）
+create_earth をパッケージ内部にカプセル化し、外部からの不正な直接アクセスに対しては意図的に AttributeError を発生させます。
 
-__init__.py を使用して alchemy パッケージの外部向けAPIをコントロールしています。
+2. ネストされたインポートとエイリアスの定義 (Part II)
+異なるスコープ（ルートディレクトリとネストされたパッケージ内）からモジュールを収集。パッケージレベルで利用可能な簡潔なショートカットエイリアス（例: alchemy.heal による healing_potion のバインド）を構築します。
 
-create_air などの関数は外部公開されます。
-
-create_earth などの内部関数は意図的にパッケージトップレベルから隠蔽され、不適切なアクセスに対して AttributeError を発生させます。
-
-2. ネストされたインポートとエイリアス登録（Part II）
-
-プロジェクトルートのモジュールとパッケージ内のネストされたモジュールを呼び出すテクニックを学び、alchemy.heal のような、呼び出しやすく洗練されたパッケージレベルのエイリアス（別名）を構築します。
-
-3. 絶対パス vs 相対パス（Part III）
-
-プロジェクト内で以下の2つのインポートを混在させ、挙動の違いを理解します：
+3. 絶対パス vs 相対パス (Part III)
+Pythonにおけるパス解決の挙動を正しく設計：
 
 絶対インポート: from alchemy.potions import strength_potion (sys.path を起点として解決)
 
 相対インポート: from ..elements import create_air (現在のモジュール位置を起点として解決)
 
-4. 循環参照による「大爆発」の回避（Part IV）
+4. 循環参照の回避手法 (Part IV)
+Darkパッケージ (dark_spellbook): 相互インポートの衝突を検証。モジュールのトップレベルで互いを参照し合うことで、インポート処理時に強制的に初期化の無限ループ（ImportError）を引き起こします。
 
-闇の魔術 (dark_spellbook): 相互にモジュールのトップレベル（起動時）でインポートし合うことで無限ループを発生させ、意図的に ImportError を起こします。
+Lightパッケージ (light_spellbook): 関数内部でインポートを解決する ローカルインポート（関数内インポート） を採用。依存関係の解決を実行時まで遅延させ、循環参照の衝突を完全に回避します。
 
-光の魔術 (light_spellbook): 関数の中でインポートを行う 「ローカルインポート（関数内インポート）」 を活用し、評価を遅延させることでこの爆発を完璧に回避します。
-
-⚙️ 検証方法
-
+⚙️ 検証手順
 1. テストスクリプトの実行
-
-ルートディレクトリから以下のスクリプトを個別に実行してください：
+ルートディレクトリにある各検証用スクリプトを実行して挙動を確認します：
 
 python3 ft_alembic_0.py
 python3 ft_alembic_1.py
 python3 ft_alembic_2.py
 python3 ft_alembic_3.py
-python3 ft_alembic_4.py  # 意図的にAttributeErrorでクラッシュします
+python3 ft_alembic_4.py  # 仕様：非公開関数へのアクセスのため AttributeError で終了
 python3 ft_alembic_5.py
 python3 ft_distillation_0.py
 python3 ft_distillation_1.py
@@ -155,23 +132,17 @@ python3 ft_transmutation_0.py
 python3 ft_transmutation_1.py
 python3 ft_transmutation_2.py
 python3 ft_kaboom_0.py
-python3 ft_kaboom_1.py   # 意図的にImportErrorでクラッシュします
+python3 ft_kaboom_1.py   # 仕様：循環参照のインポートのため ImportError で終了
 
-
-2. 規格チェック
-
-# コーディングスタイルのチェック (flake8)
+2. コード品質・静的解析の実行
+Flake8によるコーディングスタイル検証
 flake8 .
 
-# 型注釈のチェック (mypy)
+Mypyによる静的型検証
 mypy .
-# ※注意: ft_alembic_4.py は非公開の属性にアクセスするため、意図通り1つのエラーを報告します。
 
+※注意: ft_alembic_4.py は非公開属性へ直接アクセスするため、仕様として1つのエラーを検出します。
+3. # noqa コメントに関する技術的背景
+各 init.py ファイル: パッケージ全体の統合的なインポート（公開設定）を担うため、flake8 の未使用インポート警告（F401）を無効化しています。これはPythonにおける標準的なパッケージング設計です。
 
-3. コード内にある # noqa について
-
-プロジェクトの __init__.py および ft_kaboom_1.py で、意図的に # noqa コメントを使用しています。
-
-各 __init__.py では、パッケージの仲介役としてインポートを行っているため、flake8 の未使用警告（F401）を無視させる必要があり、これはPythonパッケージ開発における一般的なプラクティスです。
-
-ft_kaboom_1.py では、標準出力を画面に表示した後にクラッシュさせるという仕様を満たすため、コードの末尾でインポートを行っています。この意図的なフォーマットを許可するために # noqa: E402, F401, E501 を使用しています。
+ft_kaboom_1.py: 例外でクラッシュする前に指定されたメッセージを画面に出力させるため、コードの最下部でインポートを実行。この意図的な制御のために # noqa: E402, F401, E501 を付与して検証をパスさせています。
