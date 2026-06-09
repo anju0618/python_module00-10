@@ -1,40 +1,37 @@
 #!/usr/bin/env python3
 
+import importlib
 import sys
 from importlib.metadata import version
-
-try:
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import pandas as pd  # type: ignore
-    HAS_DEPENDENCIES = True
-except ImportError:
-    HAS_DEPENDENCIES = False
 
 
 def check_dependencies() -> bool:
     print("LOADING STATUS: Loading programs...")
-    print("Checking dependencies:")
+    print("\nChecking dependencies:")
 
-    requirements = ["pandas", "numpy"]
-    for lib in requirements:
+    requirements = [
+        ("pandas", "Data manipulation ready"),
+        ("numpy", "Numerical computation ready"),
+        ("matplotlib", "Visualization ready")
+    ]
+
+    for lib_name, ready_msg in requirements:
         try:
-            print(f"[OK] {lib} ({version(lib)})")
-        except Exception:
+            importlib.import_module(lib_name)
+            lib_version = version(lib_name)
+            print(f"[OK] {lib_name} ({lib_version}) - {ready_msg}")
+        except (ImportError, Exception):
+            print(f"\n[ERROR] {lib_name} is missing or corrupted.")
             return False
 
-    print("Data manipulation ready")
-    print("Numerical computation ready")
-    print("Visualization ready")
-
-    try:
-        print(f"[OK] matplotlib ({version('matplotlib')})")
-    except Exception:
-        return False
     return True
 
 
 def generate_42_graph() -> None:
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+
     print("\nAnalyzing Matrix data...")
     print("Processing 1000 data points...")
     print("Generating visualization...")
@@ -90,17 +87,16 @@ def generate_42_graph() -> None:
 
 
 def main() -> None:
-    if not HAS_DEPENDENCIES:
-        print("Welcome to the Real World of Data Engineering")
-        print("\n[ERROR] Missing dependencies!")
+    if check_dependencies():
+        generate_42_graph()
+    else:
+        print("\nWelcome to the Real World of Data Engineering")
+        print("[ERROR] Missing dependencies!")
         print("To install using pip, run:")
         print("    pip install -r requirements.txt")
         print("To install using Poetry, run:")
         print("    poetry install")
         sys.exit(1)
-
-    if check_dependencies():
-        generate_42_graph()
 
 
 if __name__ == "__main__":
